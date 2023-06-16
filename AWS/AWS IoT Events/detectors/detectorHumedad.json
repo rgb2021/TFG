@@ -1,0 +1,382 @@
+{
+    "detectorModelDefinition": {
+        "states": [
+            {
+                "stateName": "inicializar",
+                "onInput": {
+                    "events": [],
+                    "transitionEvents": [
+                        {
+                            "eventName": "humedadAlta",
+                            "condition": "$input.entrada.humedad >= $variable.valorMaximo",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorGrande",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "nextState": "humedadPorEncima"
+                        },
+                        {
+                            "eventName": "humedadBaja",
+                            "condition": "$input.entrada.humedad < $variable.valorMinimo",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorGrande",
+                                        "value": "false"
+                                    }
+                                }
+                            ],
+                            "nextState": "humedadPorDebajo"
+                        },
+                        {
+                            "eventName": "humedadOK",
+                            "condition": "$input.entrada.humedad <= $variable.valorMaximo && $input.entrada.humedad > $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "humedadOK"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "Inicio",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMaximo",
+                                        "value": "80"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMinimo",
+                                        "value": "30"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "enviarEstado",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarEstado",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"estado\\\": \\\"inicio\\\",\n  \\\"variable\\\": \\\"humedad\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarLimites",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarLimites",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"maximo\\\": \\\"${$variable.valorMaximo}\\\",\n\\\"minimo\\\": \\\"${$variable.valorMinimo}\\\",\n  \\\"variable\\\": \\\"humedad\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "humedadPorEncima",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.humedad}\\\",\n  \\\"variable\\\": \\\"humedad\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "humedadOK",
+                            "condition": "$input.entrada.humedad <= $variable.valorMaximo && $input.entrada.humedad > $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "humedadOK"
+                        },
+                        {
+                            "eventName": "humedadBaja",
+                            "condition": "$input.entrada.humedad < $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "humedadPorDebajo"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "actualizarEstado",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarEstado",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"estado\\\": \\\"porEncima\\\",\n  \\\"variable\\\": \\\"humedad\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.humedad}\\\",\n  \\\"variable\\\": \\\"humedad\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "notificarTelegram",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:encolarMsgToTelegram",
+                                        "payload": {
+                                            "contentExpression": "\"{\n\\\"mensaje\\\": \\\"El estado de la humedad esta por encima de los limites 😢 \\n el valor es ${$input.entrada.humedad} y deberia ser inferior a ${$variable.valorMaximo} \\\" \n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "humedadPorDebajo",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.humedad}\\\",\n  \\\"variable\\\": \\\"humedad\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "humedadOk",
+                            "condition": "$input.entrada.humedad <= $variable.valorMaximo && $input.entrada.humedad > $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "humedadOK"
+                        },
+                        {
+                            "eventName": "humedadAlta",
+                            "condition": "$input.entrada.humedad >= $variable.valorMaximo",
+                            "actions": [],
+                            "nextState": "humedadPorEncima"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "notificacionTempBaja",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "sns": {
+                                        "targetArn": "arn:aws:sns:eu-central-1:329640145453:humedadBaja"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarEstado",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarEstado",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"estado\\\": \\\"porDebajo\\\",\n  \\\"variable\\\": \\\"humedad\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.humedad}\\\",\n  \\\"variable\\\": \\\"humedad\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "notificarTelegram",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:encolarMsgToTelegram",
+                                        "payload": {
+                                            "contentExpression": "\"{\n\\\"mensaje\\\": \\\"El estado de la humedad esta por debajo de los limites 😢 \\n el valor es ${$input.entrada.humedad} y deberia ser superior a ${$variable.valorMinimo} \\\" \n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "humedadOK",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.humedad}\\\",\n  \\\"variable\\\": \\\"humedad\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "humedadAlta",
+                            "condition": "$input.entrada.humedad >= $variable.valorMaximo",
+                            "actions": [],
+                            "nextState": "humedadPorEncima"
+                        },
+                        {
+                            "eventName": "humedadBaja",
+                            "condition": "$input.entrada.humedad < $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "humedadPorDebajo"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "actualizarEstado",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarEstado",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"estado\\\": \\\"ok\\\",\n  \\\"variable\\\": \\\"humedad\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.humedad}\\\",\n  \\\"variable\\\": \\\"humedad\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "notificarTelegram",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:encolarMsgToTelegram",
+                                        "payload": {
+                                            "contentExpression": "\"{\n\\\"mensaje\\\": \\\"El estado de la humedad esta entre los limites 👌\\\" \n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            }
+        ],
+        "initialStateName": "inicializar"
+    },
+    "detectorModelDescription": null,
+    "detectorModelName": "detectorHumedad",
+    "evaluationMethod": "SERIAL",
+    "key": null,
+    "roleArn": "arn:aws:iam::329640145453:role/service-role/AWS_IoTEvents_HelloWorld_ActionRole"
+}

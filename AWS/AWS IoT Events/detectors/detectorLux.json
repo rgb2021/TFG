@@ -1,0 +1,415 @@
+{
+    "detectorModelDefinition": {
+        "states": [
+            {
+                "stateName": "Inicializar",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "actualizarLimites",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMaximo",
+                                        "value": "$input.actualizacionLimites.lux.maximo"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMinimo",
+                                        "value": "$input.actualizacionLimites.lux.minimo"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "valorAlto",
+                            "condition": "$input.entrada.lux >= $variable.valorMaximo",
+                            "actions": [],
+                            "nextState": "valorPorEncima"
+                        },
+                        {
+                            "eventName": "valorBajo",
+                            "condition": "$input.entrada.lux < $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "valorPorDebajo"
+                        },
+                        {
+                            "eventName": "valorOK",
+                            "condition": "$input.entrada.lux <= $variable.valorMaximo && $input.entrada.lux> $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "valorOK"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "actualizarEstado",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarEstado",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"estado\\\": \\\"inicio\\\",\n  \\\"variable\\\": \\\"lux\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "inicializar",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMaximo",
+                                        "value": "$input.actualizacionLimites.lux.maximo"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMinimo",
+                                        "value": "$input.actualizacionLimites.lux.minimo"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "valorPorEncima",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.lux}\\\",\n  \\\"variable\\\": \\\"lux\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarLimites",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMaximo",
+                                        "value": "$input.actualizacionLimites.lux.maximo"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMinimo",
+                                        "value": "$input.actualizacionLimites.lux.minimo"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "valorOK",
+                            "condition": "$input.entrada.lux <= $variable.valorMaximo && $input.entrada.lux> $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "valorOK"
+                        },
+                        {
+                            "eventName": "valorBajo",
+                            "condition": "$input.entrada.lux < $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "valorPorDebajo"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.lux}\\\",\n  \\\"variable\\\": \\\"lux\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarEstado",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarEstado",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"estado\\\": \\\"porEncima\\\",\n  \\\"variable\\\": \\\"lux\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "notificarTelegram",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:encolarMsgToTelegram",
+                                        "payload": {
+                                            "contentExpression": "\"{\n\\\"mensaje\\\": \\\"El estado de la radiación esta por encima de los limites 😢 \\n el valor es ${$input.entrada.lux} y deberia ser inferior a ${$variable.valorMaximo} \\\" \n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "valorPorDebajo",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.lux}\\\",\n  \\\"variable\\\": \\\"lux\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarLimites",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMaximo",
+                                        "value": "$input.actualizacionLimites.lux.maximo"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMinimo",
+                                        "value": "$input.actualizacionLimites.lux.minimo"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "valorOK",
+                            "condition": "$input.entrada.lux <= $variable.valorMaximo && $input.entrada.lux> $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "valorOK"
+                        },
+                        {
+                            "eventName": "valorAlto",
+                            "condition": "$input.entrada.lux >= $variable.valorMaximo",
+                            "actions": [],
+                            "nextState": "valorPorEncima"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.lux}\\\",\n  \\\"variable\\\": \\\"lux\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarEstado",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarEstado",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"estado\\\": \\\"porDebajo\\\",\n  \\\"variable\\\": \\\"lux\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "notificarTelegram",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:encolarMsgToTelegram",
+                                        "payload": {
+                                            "contentExpression": "\"{\n\\\"mensaje\\\": \\\"El estado de la radiacion esta por debajo de los limites 😢 \\n el valor es ${$input.entrada.lux} y deberia ser superior a ${$variable.valorMinimo} \\\" \n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "valorOK",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.lux}\\\",\n  \\\"variable\\\": \\\"lux\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarLimites",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMaximo",
+                                        "value": "$input.actualizacionLimites.lux.maximo"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMinimo",
+                                        "value": "$input.actualizacionLimites.lux.minimo"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "valorAlto",
+                            "condition": "$input.entrada.lux >= $variable.valorMaximo",
+                            "actions": [],
+                            "nextState": "valorPorEncima"
+                        },
+                        {
+                            "eventName": "valorBajo",
+                            "condition": "$input.entrada.lux < $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "valorPorDebajo"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.lux}\\\",\n  \\\"variable\\\": \\\"lux\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarEstado",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarEstado",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"estado\\\": \\\"ok\\\",\n  \\\"variable\\\": \\\"lux\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "notificarTelegram",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:encolarMsgToTelegram",
+                                        "payload": {
+                                            "contentExpression": "\"{\n\\\"mensaje\\\": \\\"El estado de la radiacion esta entre los limites 👌 \\n el valor es ${$input.entrada.lux} [ ${$variable.valorMinimo} - ${$variable.valorMaximo} ]\\\" \n}\"\n",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            }
+        ],
+        "initialStateName": "Inicializar"
+    },
+    "detectorModelDescription": null,
+    "detectorModelName": "detectorLux",
+    "evaluationMethod": "SERIAL",
+    "key": null,
+    "roleArn": "arn:aws:iam::329640145453:role/service-role/AWS_IoTEvents_HelloWorld_ActionRole"
+}

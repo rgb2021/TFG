@@ -1,0 +1,367 @@
+{
+    "detectorModelDefinition": {
+        "states": [
+            {
+                "stateName": "inicializar",
+                "onInput": {
+                    "events": [],
+                    "transitionEvents": [
+                        {
+                            "eventName": "temperaturaAlta",
+                            "condition": "$input.entrada.temperatura >= $variable.valorMaximo",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorGrande",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "nextState": "temperaturaPorEncima"
+                        },
+                        {
+                            "eventName": "temperaturaBaja",
+                            "condition": "$input.entrada.temperatura < $variable.valorMinimo",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorGrande",
+                                        "value": "false"
+                                    }
+                                }
+                            ],
+                            "nextState": "temperaturaPorDebajo"
+                        },
+                        {
+                            "eventName": "temperaturaOK",
+                            "condition": "$input.entrada.temperatura <= $variable.valorMaximo && $input.entrada.temperatura > $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "temperaturaOK"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "Inicio",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMaximo",
+                                        "value": "35"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "valorMinimo",
+                                        "value": "20"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "enviarEstado",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "test/estadoTemp"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarLimites",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarLimites",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"maximo\\\": \\\"${$variable.valorMaximo}\\\",\n\\\"minimo\\\": \\\"${$variable.valorMinimo}\\\",\n  \\\"variable\\\": \\\"temperatura\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "temperaturaPorEncima",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.temperatura}\\\",\n  \\\"variable\\\": \\\"temperatura\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "temperaturaOK",
+                            "condition": "$input.entrada.temperatura <= $variable.valorMaximo && $input.entrada.temperatura > $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "temperaturaOK"
+                        },
+                        {
+                            "eventName": "temperaturaBaja",
+                            "condition": "$input.entrada.temperatura < $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "temperaturaPorDebajo"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.temperatura}\\\",\n  \\\"variable\\\": \\\"temperatura\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarEstado",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarEstado",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"estado\\\": \\\"ok\\\",\n  \\\"variable\\\": \\\"temperatura\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "notificarTelegram",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:encolarMsgToTelegram",
+                                        "payload": {
+                                            "contentExpression": "\"{\n\\\"mensaje\\\": \\\"El estado de la temperatura esta por encima de los limites 😢 \\n el valor es ${$input.entrada.temperatura} y deberia ser inferior a ${$variable.valorMaximo} \\\" \n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "temperaturaPorDebajo",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.temperatura}\\\",\n  \\\"variable\\\": \\\"temperatura\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "temperaturaOk",
+                            "condition": "$input.entrada.temperatura <= $variable.valorMaximo && $input.entrada.temperatura > $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "temperaturaOK"
+                        },
+                        {
+                            "eventName": "temperaturaAlta",
+                            "condition": "$input.entrada.temperatura >= $variable.valorMaximo",
+                            "actions": [],
+                            "nextState": "temperaturaPorEncima"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "actualizarEstado",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarEstado",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"estado\\\": \\\"porDebajo\\\",\n  \\\"variable\\\": \\\"temperatura\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.temperatura}\\\",\n  \\\"variable\\\": \\\"temperatura\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "notificarTelegram",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:encolarMsgToTelegram",
+                                        "payload": {
+                                            "contentExpression": "\"{\n\\\"mensaje\\\": \\\"El estado de la temperatura esta por debajo de los limites 😢 \\n el valor es ${$input.entrada.temperatura} y deberia ser superior a ${$variable.valorMinimo} \\\" \n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "temperaturaOK",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.temperatura}\\\",\n  \\\"variable\\\": \\\"temperatura\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "temperaturaAlta",
+                            "condition": "$input.entrada.temperatura >= $variable.valorMaximo",
+                            "actions": [],
+                            "nextState": "temperaturaPorEncima"
+                        },
+                        {
+                            "eventName": "temperaturaBaja",
+                            "condition": "$input.entrada.temperatura < $variable.valorMinimo",
+                            "actions": [],
+                            "nextState": "temperaturaPorDebajo"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "actualizarValor",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarValor",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"valor\\\": \\\"${$input.entrada.temperatura}\\\",\n  \\\"variable\\\": \\\"temperatura\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarEstado",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:actualizarEstado",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"estado\\\": \\\"ok\\\",\n  \\\"variable\\\": \\\"temperatura\\\"\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "notificarTelegram",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:encolarMsgToTelegram",
+                                        "payload": {
+                                            "contentExpression": "\"{\n\\\"mensaje\\\": \\\"El estado de la temperatura esta entre los limites 👌\\\" \n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            }
+        ],
+        "initialStateName": "inicializar"
+    },
+    "detectorModelDescription": null,
+    "detectorModelName": "detectorTemperatura",
+    "evaluationMethod": "SERIAL",
+    "key": null,
+    "roleArn": "arn:aws:iam::329640145453:role/service-role/AWS_IoTEvents_HelloWorld_ActionRole"
+}

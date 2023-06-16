@@ -1,0 +1,108 @@
+{
+    "detectorModelDefinition": {
+        "states": [
+            {
+                "stateName": "InicializarTemporizador",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "leerFecha",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "horaActual",
+                                        "value": "$input.entrada.fecha"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "timeout",
+                            "condition": "timeout(\"temporizador\")",
+                            "actions": [],
+                            "nextState": "resetearTemporizador"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "inicioTemporizador",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setTimer": {
+                                        "timerName": "temporizador",
+                                        "seconds": 3600,
+                                        "durationExpression": null
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "actualizarValoresHorariosDetector",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "lambda": {
+                                        "functionArn": "arn:aws:lambda:eu-central-1:329640145453:function:leerValoresHorarios",
+                                        "payload": {
+                                            "contentExpression": "\"{\n  \\\"id\\\": \\\"lux\\\",\n  \\\"margen\\\": 2500\n}\"",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "resetearTemporizador",
+                "onInput": {
+                    "events": [],
+                    "transitionEvents": [
+                        {
+                            "eventName": "reset",
+                            "condition": "true",
+                            "actions": [],
+                            "nextState": "InicializarTemporizador"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "resetearTemporizador",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setTimer": {
+                                        "timerName": "temporizador",
+                                        "seconds": 3600,
+                                        "durationExpression": null
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            }
+        ],
+        "initialStateName": "InicializarTemporizador"
+    },
+    "detectorModelDescription": null,
+    "detectorModelName": "temporizadorLux",
+    "evaluationMethod": "SERIAL",
+    "key": null,
+    "roleArn": "arn:aws:iam::329640145453:role/service-role/AWS_IoTEvents_HelloWorld_ActionRole"
+}

@@ -1,0 +1,130 @@
+log:  Sending CONNECT (u0, p0, wr0, wq0, wf0, c1, k60) client_id=b'RaspiTFG'
+log:  Received CONNACK (0, 0)
+connected OK Returned code= 0
+Unexpected err=JSONDecodeError("Expecting ':' delimiter: line 1 column 6 (char 5)"), type(err)=<class 'json.decoder.JSONDecodeError'>
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 18.5, 'humedad': 31.7, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:02:42.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m1), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 18.5, 'humedad': 31.5, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:03:42.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m2), 'b'mediciones/sensores'', ... (140 bytes)
+dato recibido->{'lux': 0, 'temperatura': 18.5, 'humedad': 30.5, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:04:42.000Z'}
+log:  Sending PINGREQ
+log:  Sending PUBLISH (d0, q0, r0, m3), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 18.5, 'humedad': 30.5, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:05:42.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m4), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 18.4, 'humedad': 30.6, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:06:42.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m5), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 18.3, 'humedad': 30.3, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:07:42.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m6), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 18.2, 'humedad': 30.6, 'humedadSuelo': 1, 'fecha': '2023-04-06T22:08:42.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m7), 'b'mediciones/sensores'', ... (139 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 18.1, 'humedad': 30.7, 'humedadSuelo': -2, 'fecha': '2023-04-06T22:09:42.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m8), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 18, 'humedad': 31, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:10:42.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m9), 'b'mediciones/sensores'', ... (136 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0.833333, 'temperatura': 18, 'humedad': 31.2, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:11:42.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m10), 'b'mediciones/sensores'', ... (145 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 18, 'humedad': 30.8, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:12:42.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m11), 'b'mediciones/sensores'', ... (138 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 18, 'humedad': 30.9, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:13:42.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m12), 'b'mediciones/sensores'', ... (138 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 18, 'humedad': 31, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:14:43.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m13), 'b'mediciones/sensores'', ... (136 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 18, 'humedad': 31.2, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:15:43.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m14), 'b'mediciones/sensores'', ... (138 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.9, 'humedad': 31, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:16:43.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m15), 'b'mediciones/sensores'', ... (138 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.9, 'humedad': 31.2, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:17:43.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m16), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.8, 'humedad': 31, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:18:43.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m17), 'b'mediciones/sensores'', ... (138 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.8, 'humedad': 30.9, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:19:43.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m18), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.6, 'humedad': 31.2, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:20:43.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m19), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.5, 'humedad': 31.4, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:21:43.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m20), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.5, 'humedad': 31.2, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:22:43.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m21), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.5, 'humedad': 31.2, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:23:43.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m22), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.5, 'humedad': 31.2, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:24:43.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m23), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.5, 'humedad': 31.4, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:25:43.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m24), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.5, 'humedad': 31.1, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:26:43.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m25), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0.833333, 'temperatura': 17.4, 'humedad': 31.1, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:27:44.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m26), 'b'mediciones/sensores'', ... (147 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.4, 'humedad': 31.3, 'humedadSuelo': 0, 'fecha': '2023-04-06T22:28:44.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m27), 'b'mediciones/sensores'', ... (139 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.3, 'humedad': 31.2, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:29:44.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m28), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.3, 'humedad': 31.4, 'humedadSuelo': 0, 'fecha': '2023-04-06T22:30:44.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m29), 'b'mediciones/sensores'', ... (139 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0.833333, 'temperatura': 17.3, 'humedad': 31.2, 'humedadSuelo': 0, 'fecha': '2023-04-06T22:31:44.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m30), 'b'mediciones/sensores'', ... (146 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.4, 'humedad': 32.2, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:32:44.000Z'}
+log:  Sending PUBLISH (d0, q0, r0, m31), 'b'mediciones/sensores'', ... (140 bytes)
+log:  Sending PINGREQ
+log:  Received PINGRESP
+dato recibido->{'lux': 0, 'temperatura': 17.4, 'humedad': 31.6, 'humedadSuelo': -1, 'fecha': '2023-04-06T22:33:44.000Z'}
+log:  
