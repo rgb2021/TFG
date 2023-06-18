@@ -10,7 +10,7 @@ import json
 ser = serial.Serial('/dev/ttyACM0', 9600) # Configurar el puerto serie USB
 
 # Configura la conexión con la base de datos en Atlas
-cliente = pymongo.MongoClient("mongodb+srv://raulgb23:xCxk3J4KjmXu3VE0@cluster0.mtra137.mongodb.net/?retryWrites=true&w=majority")
+cliente = pymongo.MongoClient("mongodb+srv://XXXXXXXXXXXXXXXXXXXXXXXXXX")
 db = cliente["TFG"]
 coleccion = db["lecturas_sensores"]
 
