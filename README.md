@@ -4,7 +4,7 @@ Es parte para mi TFE en UNIR
 
 En este trabajo se ha construido un sistema de supervisión para cultivos inteligentes. Para ello se han usado sensores y otros elementos de bajo costo como son placas Arduino y Raspberry pi para la recolección de la información del cultivo.
 
-![Conexiones sensores](/docs/sensores/Untitled Sketch_bb.png "Conexiones sensores")
+![Conexiones sensores](/docs/sensores/Sketch_bb.png "Conexiones sensores")
 
 Por otro lado se ha desarrollado una arquitectura de servicios en la plataforma de  AWS para gestionar los datos recibidos y generar alarmas. Aprovechando así las características del entorno en la nube de Amazon escalabilidad, flexibilidad, reducción de costos, alta disponibilidad ,seguridad y velocidad de desarrollo.
 
